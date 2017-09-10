@@ -19,4 +19,20 @@ Vagrant.configure("2") do |config|
       service postgresql restart
     SHELL
   end
+
+  config.vm.define "web" do |web|
+    config.vm.network "forwarded_port", guest: 8000, host: 8000
+    config.vm.network "private_network", ip: "192.168.1.10"
+
+    config.vm.provider "virtualbox" do |vb|
+      vb.name = "dj"
+      vb.gui =  false
+      vb.memory = 512
+    end
+
+    config.vm.provision "shell", inline: <<-SHELL
+      apt-get install -y python-pip python-dev libpq-dev postgresql postgresql-contrib
+      pip install django flake8 psycopg2
+    SHELL
+  end
 end
